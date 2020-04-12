@@ -18,12 +18,4 @@ public class WorldGrid : MonoBehaviour
     {
         grid = new Grid(width, height, cellSize);
     }
-
-    private void OnDrawGizmos()
-    {
-        if (grid != null && debugGrid)
-        {
-            grid.DrawGridCells(Color.white, 0.05f);
-        }
-    }
 }

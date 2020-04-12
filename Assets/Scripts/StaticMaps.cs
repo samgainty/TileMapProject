@@ -23,6 +23,8 @@ public static class StaticMaps
 
     public static Vector2Int playerMapIndex;
 
+    public static float breakTimer;
+
     public static void DetectMapRenderers()
     {
         // Get tile map renderers for each map layer if it exists
@@ -66,7 +68,9 @@ public static class StaticMaps
                 break;
         }
 
-        tileData[position.x, position.y] = TileBook.GetTileDataByName(tile.name);
+        tileData[position.x, position.y] = new TileData(TileBook.GetTileDataByName(tile.name));
+
+        //DetectSeal.CheckSeal();
     }
 
     // Check if player position on map is same as tile position

@@ -5,13 +5,10 @@ using UnityEditor;
 
 public static class CustomGizmos
 {
-    public static void DrawWireSquare(Vector3 position, Vector3 size, Color lineColour, Color fillColour)
+    public static void DrawWireSquare(Vector3 position, Vector3 size, Color lineColour, Color fillColour, string data = "")
     {
-        if (fillColour != null)
-        {
-            Gizmos.color = fillColour;
-            Gizmos.DrawCube(Vector3.zero, Vector3.one);
-        }
+        Gizmos.color = fillColour;
+        Gizmos.DrawCube(position, Vector3.one);
 
         Gizmos.color = lineColour;
         // Left line
@@ -23,7 +20,7 @@ public static class CustomGizmos
         // Bottom line
         Gizmos.DrawLine(position - Vector3.right * size.x * 0.5f - Vector3.up * size.y * 0.5f, position + Vector3.right * size.x * 0.5f - Vector3.up * size.y * 0.5f);
 
-        DrawString("0", position, Color.white);
+        DrawString(data, position, lineColour);
 
         
     }

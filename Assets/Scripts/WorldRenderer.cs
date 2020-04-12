@@ -49,6 +49,7 @@ public class WorldRenderer : MonoBehaviour
         Debug.Log("Tile Count: " + TileBook.GetTileCount());
         SetGridToSpace();
         CreateStartRoom();
+        DetectSeal.CheckSeal();
     }
 
     // Initialise whole grid to space tiles

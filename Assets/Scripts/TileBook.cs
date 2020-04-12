@@ -28,7 +28,10 @@ public static class TileBook
 
             TileData data = new TileData();
             bool canBuild = !(tile.name == "Wall");
+            bool canBlock = (tile.name == "Wall");
             data.SetCanBuildUpon(canBuild);
+            data.SetCanBlockAir(canBlock);
+            data.SetIsSealed(false);
 
             tileData.Add(tile.name, data);
 

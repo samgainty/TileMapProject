@@ -12,12 +12,16 @@ public static class StaticMaps
     public static Tilemap objectMap;
     public static Tilemap placementMap;
 
+    public static TileData[,] tileData;
+
     // Tile map renderers for each layer
     private static TilemapRenderer worldMapRenderer;
     private static TilemapRenderer objectMapRenderer;
     private static TilemapRenderer placementMapRenderer;
 
     public static Transform placementTransform;
+
+    public static Vector2Int playerMapIndex;
 
     public static void DetectMapRenderers()
     {
@@ -45,5 +49,33 @@ public static class StaticMaps
                 placementMapRenderer.enabled = state;
                 break;
         }
+    }
+
+    public static void SetTile(MapType mapType, Vector3Int position, Tile tile)
+    {
+        switch (mapType)
+        {
+            case MapType.World:
+                worldMap.SetTile(position, tile);
+                break;
+            case MapType.Object:
+                objectMap.SetTile(position, tile);
+                break;
+            case MapType.Placement:
+                placementMap.SetTile(position, tile);
+                break;
+        }
+
+        tileData[position.x, position.y] = TileBook.GetTileDataByName(tile.name);
+    }
+
+    // Check if player position on map is same as tile position
+    public static bool CheckMapPlayerIntersection(Vector2Int tilePosition)
+    {
+        if (playerMapIndex == tilePosition)
+        {
+            return true;
+        }
+        return false;
     }
 }

@@ -8,6 +8,8 @@ public class TilePlacer : MonoBehaviour
     private float clickReach = 3.0f;
     private Camera cam;
 
+    private bool canPlace = false;
+
     void Start()
     {
         cam = Camera.main;
@@ -22,21 +24,25 @@ public class TilePlacer : MonoBehaviour
 
     void Update()
     {
+        Vector3 clickPosition;
+        clickPosition = cam.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10.0f;
+
         // Detect input for selecting tool bar items
         DetectToolbarSelection();
         // Only display placement overlay if selected item is a placeable tile
-        if (Toolbar.GetItemByIndex(Toolbar.currentIndex).itemType == InventoryItem.Type.Tile)
+        if (Toolbar.GetItemByIndex(Toolbar.currentIndex).itemType == InventoryItem.Type.Tile 
+            && GridUtils.AABBFloat2D(0, StaticMaps.worldMap.size.x, 0, StaticMaps.worldMap.size.y, new Vector2(clickPosition.x, clickPosition.y)))
         {
             // Display placement preview
             StaticMaps.ToggleMapRenderer(StaticMaps.MapType.Placement, true);
             StaticMaps.placementMap.SetTile(Vector3Int.zero, Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile);
             DisplayTileToPlace();
-            DetectClick();
         }
         else
         {
             StaticMaps.ToggleMapRenderer(StaticMaps.MapType.Placement, false);
         }
+        DetectClick();
     }
 
     // Track mouse cursor with placement tile preview
@@ -45,6 +51,26 @@ public class TilePlacer : MonoBehaviour
         Vector3 clickPosition;
         clickPosition = cam.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10.0f;
         StaticMaps.placementTransform.position = new Vector3((int)clickPosition.x, (int)clickPosition.y, 0);
+
+        if (clickPosition.x < StaticMaps.worldMap.size.x && clickPosition.y < StaticMaps.worldMap.size.y
+            && clickPosition.x >= 0 && clickPosition.y >= 0)
+        {
+            if (StaticMaps.tileData[(int)clickPosition.x, (int)clickPosition.y].GetCanBuildUpon()
+                && !StaticMaps.CheckMapPlayerIntersection(new Vector2Int((int)clickPosition.x, (int)clickPosition.y)))
+            {
+                canPlace = true;
+                StaticMaps.placementMap.color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
+            }
+            else
+            {
+                canPlace = false;
+                StaticMaps.placementMap.color = new Color(1.0f, 0.0f, 0.0f, 0.4f);
+            }
+        }
+        else
+        {
+            canPlace = false;
+        }
     }
 
     private void DetectClick()
@@ -54,14 +80,22 @@ public class TilePlacer : MonoBehaviour
         clickPosition = cam.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10.0f;
         if (Input.GetMouseButtonDown(0))
         {
-            // If click detected check if within place range
             float dstToClick = (clickPosition - transform.position).magnitude;
             if (dstToClick <= clickReach)
             {
-                Debug.Log(clickPosition);
+                Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
+                StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, TileBook.GetTileByName("Space"));
+            }
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            // If click detected check if within place range
+            float dstToClick = (clickPosition - transform.position).magnitude;
+            if (dstToClick <= clickReach && canPlace && Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile != null)
+            {
                 // Set tile at index to current tile
                 Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
-                //map.SetTile(mapIndex, TileBook.GetTileByName("Blank"));
+                StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile);
             }
         }
     }

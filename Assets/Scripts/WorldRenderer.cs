@@ -37,6 +37,15 @@ public class WorldRenderer : MonoBehaviour
         // Set placement map transform for moving tile placement preview
         StaticMaps.placementTransform = placementMap.gameObject.transform;
 
+        StaticMaps.tileData = new TileData[grid.width, grid.height];
+        for (int y = 0; y < grid.height; y++)
+        {
+            for (int x = 0; x < grid.width; x++)
+            {
+                StaticMaps.tileData[x, y] = new TileData();
+            }
+        }
+
         Debug.Log("Tile Count: " + TileBook.GetTileCount());
         SetGridToSpace();
         CreateStartRoom();
@@ -49,7 +58,7 @@ public class WorldRenderer : MonoBehaviour
         {
             for (int x = 0; x < grid.width; x++)
             {
-                worldMap.SetTile(new Vector3Int(x, y, 0), TileBook.GetTileByName("Space"));
+                StaticMaps.SetTile(StaticMaps.MapType.World, new Vector3Int(x, y, 0), TileBook.GetTileByName("Space"));
             }
         }
     }
@@ -61,14 +70,14 @@ public class WorldRenderer : MonoBehaviour
         {
             for (int x = 4; x < 10; x++)
             {
-                worldMap.SetTile(new Vector3Int(x, y, 0), TileBook.GetTileByName("Wall"));
+                StaticMaps.SetTile(StaticMaps.MapType.World, new Vector3Int(x, y, 0), TileBook.GetTileByName("Wall"));
             }
         }
         for (int y = 5; y < 9; y++)
         {
             for (int x = 5; x < 9; x++)
             {
-                worldMap.SetTile(new Vector3Int(x, y, 0), TileBook.GetTileByName("Floor"));
+                StaticMaps.SetTile(StaticMaps.MapType.World, new Vector3Int(x, y, 0), TileBook.GetTileByName("Floor"));
             }
         }
     }

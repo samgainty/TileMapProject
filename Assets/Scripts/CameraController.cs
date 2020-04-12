@@ -22,6 +22,8 @@ public class CameraController : MonoBehaviour
         float inputY = Input.GetAxisRaw("Vertical");
 
         // Apply to player rigidbody2D
-        rb.velocity = Vector3.right * inputX * moveSpeed + Vector3.up * inputY * moveSpeed;     
+        rb.velocity = Vector3.right * inputX * moveSpeed + Vector3.up * inputY * moveSpeed;
+
+        StaticMaps.playerMapIndex = new Vector2Int((int)transform.position.x, (int)transform.position.y);
     }
 }

@@ -7,6 +7,7 @@ public static class TileBook
 {
     // Tile and index dictionaries
     private static Dictionary<string, Tile> tiles;
+    private static Dictionary<string, TileData> tileData;
     private static Dictionary<int, string> tileIndices;
 
     static TileBook()
@@ -16,6 +17,7 @@ public static class TileBook
         // Initialise dictionary for tiles and indices
         tiles = new Dictionary<string, Tile>(tilePrefabs.Length);
         tileIndices = new Dictionary<int, string>(tilePrefabs.Length);
+        tileData = new Dictionary<string, TileData>(tilePrefabs.Length);
 
         int index = 0;
         // Fill dictionary for tile and indices from loaded resources
@@ -23,6 +25,13 @@ public static class TileBook
         {
             tiles.Add(tile.name, tile);
             tileIndices.Add(index, tile.name);
+
+            TileData data = new TileData();
+            bool canBuild = !(tile.name == "Wall");
+            data.SetCanBuildUpon(canBuild);
+
+            tileData.Add(tile.name, data);
+
             index++;
         }
     }
@@ -41,5 +50,15 @@ public static class TileBook
     public static Tile GetTileByIndex(int index)
     {
         return tiles[tileIndices[index]];
+    }
+
+    public static TileData GetTileDataByName(string name)
+    {
+        return tileData[name];
+    }
+
+    public static TileData GetTileDataByIndex(int index)
+    {
+        return tileData[tileIndices[index]];
     }
 }

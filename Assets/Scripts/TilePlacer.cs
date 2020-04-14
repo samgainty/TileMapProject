@@ -18,10 +18,9 @@ public class TilePlacer : MonoBehaviour
         Toolbar.InitToolBar(10);
 
         // Fill toolbar with debug items
-        for (int i = 0; i < TileBook.GetTileCount(); i++)
-        {
-            Toolbar.SetItemAtIndex(new InventoryItem(TileBook.GetTileByIndex(i), 1), i);
-        }
+        Toolbar.SetItemAtIndex(new InventoryItem(TileBook.GetTileByName("Floor"), 1), 0);
+        Toolbar.SetItemAtIndex(new InventoryItem(TileBook.GetTileByName("Wall"), 1), 1);
+        Toolbar.SetItemAtIndex(new InventoryItem(TileBook.GetTileByName("Object"), 1), 2);
     }
 
     void Update()
@@ -43,6 +42,7 @@ public class TilePlacer : MonoBehaviour
         else
         {
             StaticMaps.ToggleMapRenderer(StaticMaps.MapType.Placement, false);
+            canPlace = false;
         }
         DetectClick();
     }
@@ -50,14 +50,17 @@ public class TilePlacer : MonoBehaviour
     // Track mouse cursor with placement tile preview
     private void DisplayTileToPlace()
     {
+        // Get mouse position in world space at z = 0
         Vector3 clickPosition;
         clickPosition = cam.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10.0f;
         StaticMaps.placementTransform.position = new Vector3((int)clickPosition.x, (int)clickPosition.y, 0);
 
+        // If mouse cursor is within grid bounds
         if (clickPosition.x < StaticMaps.worldMap.size.x && clickPosition.y < StaticMaps.worldMap.size.y
             && clickPosition.x >= 0 && clickPosition.y >= 0)
         {
-            if (StaticMaps.tileData[(int)clickPosition.x, (int)clickPosition.y].GetCanBuildUpon()
+            // Check if current tile can be built upon
+            if (StaticMaps.CheckIfCanBuildUpon((int)clickPosition.x, (int)clickPosition.y)
                 && !StaticMaps.CheckMapPlayerIntersection(new Vector2Int((int)clickPosition.x, (int)clickPosition.y)))
             {
                 canPlace = true;
@@ -82,15 +85,27 @@ public class TilePlacer : MonoBehaviour
         clickPosition = cam.ScreenToWorldPoint(Input.mousePosition) + Vector3.forward * 10.0f;
         if (Input.GetMouseButton(0))
         {
+            // Get tile map index of mouse position
             Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
             float dstToClick = (clickPosition - transform.position).magnitude;
+            // Check if mouse position is in range of player
             if (dstToClick <= clickReach && StaticMaps.worldMap.GetTile(mapIndex) != TileBook.GetTileByName("Space"))
             {
                 breakTimer += Time.deltaTime;
+                // Once break timer has exceeded value remove tile
                 if (breakTimer >= 1.0f)
                 {
-                    StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, TileBook.GetTileByName("Space"));
+                    if (StaticMaps.objectMap.GetTile(mapIndex) != TileBook.GetTileByName("NullObject")
+                        && StaticMaps.objectMap.GetTile(mapIndex) != null)
+                    {
+                        StaticMaps.SetTile(StaticMaps.MapType.Object, mapIndex, TileBook.GetTileByName("NullObject"));
+                    }
+                    else
+                    {
+                        StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, TileBook.GetTileByName("Space"));
+                    }
                     breakTimer = 0.0f;
+                    // Check for change in air seal
                     DetectSeal.CheckSeal();
                 }
             }
@@ -102,8 +117,16 @@ public class TilePlacer : MonoBehaviour
             if (dstToClick <= clickReach && canPlace && Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile != null)
             {
                 // Set tile at index to current tile
-                Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
-                StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile);
+                if (TileBook.GetTileDataByName(Toolbar.GetItemByIndex(Toolbar.currentIndex).itemName).GetTileType() == TileData.TileType.WorldTile)
+                {
+                    Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
+                    StaticMaps.SetTile(StaticMaps.MapType.World, mapIndex, Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile);
+                }
+                else if (TileBook.GetTileDataByName(Toolbar.GetItemByIndex(Toolbar.currentIndex).itemName).GetTileType() == TileData.TileType.ObjectTile)
+                {
+                    Vector3Int mapIndex = new Vector3Int((int)clickPosition.x, (int)clickPosition.y, 0);
+                    StaticMaps.SetTile(StaticMaps.MapType.Object, mapIndex, Toolbar.GetItemByIndex(Toolbar.currentIndex).itemTile);
+                }
                 DetectSeal.CheckSeal();
             }
         }

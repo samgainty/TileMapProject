@@ -27,8 +27,10 @@ public static class TileBook
             tileIndices.Add(index, tile.name);
 
             TileData data = new TileData();
-            bool canBuild = !(tile.name == "Wall");
+            bool canBuild = !(tile.name == "Wall" || tile.name == "Object");
             bool canBlock = (tile.name == "Wall");
+            TileData.TileType type = (tile.name == "Object" || tile.name == "NullObject") ? TileData.TileType.ObjectTile : TileData.TileType.WorldTile;
+            data.SetTileType(type);
             data.SetCanBuildUpon(canBuild);
             data.SetCanBlockAir(canBlock);
             data.SetIsSealed(false);

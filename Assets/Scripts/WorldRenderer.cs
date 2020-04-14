@@ -37,12 +37,21 @@ public class WorldRenderer : MonoBehaviour
         // Set placement map transform for moving tile placement preview
         StaticMaps.placementTransform = placementMap.gameObject.transform;
 
-        StaticMaps.tileData = new TileData[grid.width, grid.height];
+        StaticMaps.worldTileData = new TileData[grid.width, grid.height];
         for (int y = 0; y < grid.height; y++)
         {
             for (int x = 0; x < grid.width; x++)
             {
-                StaticMaps.tileData[x, y] = new TileData();
+                StaticMaps.worldTileData[x, y] = new TileData();
+            }
+        }
+
+        StaticMaps.objectTileData = new TileData[grid.width, grid.height];
+        for (int y = 0; y < grid.height; y++)
+        {
+            for (int x = 0; x < grid.width; x++)
+            {
+                StaticMaps.objectTileData[x, y] = new TileData();
             }
         }
 

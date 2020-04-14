@@ -12,7 +12,8 @@ public static class StaticMaps
     public static Tilemap objectMap;
     public static Tilemap placementMap;
 
-    public static TileData[,] tileData;
+    public static TileData[,] worldTileData;
+    public static TileData[,] objectTileData;
 
     // Tile map renderers for each layer
     private static TilemapRenderer worldMapRenderer;
@@ -59,18 +60,25 @@ public static class StaticMaps
         {
             case MapType.World:
                 worldMap.SetTile(position, tile);
+                worldTileData[position.x, position.y] = new TileData(TileBook.GetTileDataByName(tile.name));
                 break;
             case MapType.Object:
                 objectMap.SetTile(position, tile);
+                objectTileData[position.x, position.y] = new TileData(TileBook.GetTileDataByName(tile.name));
                 break;
             case MapType.Placement:
                 placementMap.SetTile(position, tile);
                 break;
         }
+    }
 
-        tileData[position.x, position.y] = new TileData(TileBook.GetTileDataByName(tile.name));
-
-        //DetectSeal.CheckSeal();
+    public static bool CheckIfCanBuildUpon(int xPos, int yPos)
+    {
+        if (StaticMaps.worldTileData[xPos, yPos].GetCanBuildUpon() && StaticMaps.objectTileData[xPos, yPos].GetCanBuildUpon())
+        {
+            return true;
+        }
+        return false;
     }
 
     // Check if player position on map is same as tile position

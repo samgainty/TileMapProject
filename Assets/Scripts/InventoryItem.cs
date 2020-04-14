@@ -8,6 +8,8 @@ public class InventoryItem
     public enum Type {Blank, Tile, Tool};
 
     public Type itemType;
+
+
     public string itemName;
     public int itemCount;
 
@@ -37,5 +39,6 @@ public class InventoryItem
         itemType = Type.Blank;
         itemName = "";
         itemCount = 0;
+        itemTile = null;
     }
 }

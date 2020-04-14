@@ -12,7 +12,7 @@ public class GridMetrics : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (StaticMaps.tileData != null)
+        if (StaticMaps.worldTileData != null)
         {
             switch (metric)
             {
@@ -50,7 +50,7 @@ public class GridMetrics : MonoBehaviour
             for (int x = 0; x < grid.width; x++)
             {
                 // Draw grid indicating tiles which cannot be built upon
-                if (StaticMaps.tileData[x,y].GetCanBuildUpon())
+                if (StaticMaps.worldTileData[x,y].GetCanBuildUpon())
                 CustomGizmos.DrawWireSquare(GetWorldPosition(x, y) + new Vector3(0.5f, 0.5f, 0.0f), Vector3.one * grid.cellSize, Color.white, Color.clear, "");
                 else
                     CustomGizmos.DrawWireSquare(GetWorldPosition(x, y) + new Vector3(0.5f, 0.5f, 0.0f), Vector3.one * grid.cellSize, Color.white, new Color(0.75f, 0.0f, 0.0f, 0.4f), "");
@@ -66,7 +66,7 @@ public class GridMetrics : MonoBehaviour
             for (int x = 0; x < grid.width; x++)
             {
                 // Draw grid indicating air sealed spaces
-                if (StaticMaps.tileData[x, y].IsSealed())
+                if (StaticMaps.worldTileData[x, y].IsSealed())
                     CustomGizmos.DrawWireSquare(GetWorldPosition(x, y) + new Vector3(0.5f, 0.5f, 0.0f), Vector3.one * grid.cellSize, Color.white, new Color(0.0f, 0.0f, 0.75f, 0.4f), "");
                 else
                     CustomGizmos.DrawWireSquare(GetWorldPosition(x, y) + new Vector3(0.5f, 0.5f, 0.0f), Vector3.one * grid.cellSize, Color.white, Color.clear, "");

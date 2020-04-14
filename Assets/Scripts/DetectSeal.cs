@@ -11,7 +11,7 @@ public static class DetectSeal
         {
             for (int x = 0; x < StaticMaps.worldMap.size.x; x++)
             {
-                StaticMaps.tileData[x, y].SetIsSealed(true);
+                StaticMaps.worldTileData[x, y].SetIsSealed(true);
             }
         }
 
@@ -52,13 +52,13 @@ public static class DetectSeal
             if (y < 0 || y > h - 1 || x < 0 || x > w - 1)
                 continue;
             // If tile can block airflow then move onto next tile
-            if (StaticMaps.tileData[x, y].CanBlockAir())
+            if (StaticMaps.worldTileData[x, y].CanBlockAir())
                 continue;
 
             // If tile has not already been checked the set sealed to false
-            if (StaticMaps.tileData[x, y].IsSealed())
+            if (StaticMaps.worldTileData[x, y].IsSealed())
             {
-                StaticMaps.tileData[x, y].SetIsSealed(false);
+                StaticMaps.worldTileData[x, y].SetIsSealed(false);
                 // Add adjacent tiles to work queue
                 stack.Push(new Vector2Int(x + 1, y));
                 stack.Push(new Vector2Int(x - 1, y));
